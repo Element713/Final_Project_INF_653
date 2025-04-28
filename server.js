@@ -4,33 +4,35 @@ const mongoose = require('mongoose');
 const app = express();
 const path = require('path');
 
-const PORT = process.env.PORT || 3500;
+// Connect to MongoDB
+mongoose.connect(process.env.DATABASE_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('MongoDB connection failed:', err));
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Middlewares
+app.use(express.json()); // Built-in body parser
 
-// Routes
-app.use('/', express.static(path.join(__dirname, '/views'))); // serve index.html
-app.use('/states', require('./routes/states'));
+// Static HTML landing page
+app.use('/', express.static(path.join(__dirname, '/public')));
 
-// 404 Handler
+// API routes
+const statesRoutes = require('./routes/states');
+app.use('/states', statesRoutes);
+
+// 404 Catch-all
 app.all('*', (req, res) => {
-  res.status(404);
-  if (req.accepts('html')) {
-    res.sendFile(path.join(__dirname, 'views', '404.html'));
-  } else if (req.accepts('json')) {
-    res.json({ error: "404 Not Found" });
-  } else {
-    res.type('txt').send('404 Not Found');
-  }
+    if (req.accepts('html')) {
+        res.status(404).sendFile(path.join(__dirname, '/public/404.html'));
+    } else if (req.accepts('json')) {
+        res.status(404).json({ error: '404 Not Found' });
+    } else {
+        res.status(404).type('txt').send('404 Not Found');
+    }
 });
 
-// DB Connection
-mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch(err => console.error(err));
-
+// Listen
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
