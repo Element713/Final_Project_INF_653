@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const app = express();
 require('dotenv').config();
-require('./routes/states');
+const State = require('./models/State');
+console.log('State model loaded:', State);
 
 // Connect to MongoDB
 connectDB();
@@ -17,7 +18,7 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 
 // API routes
 const statesRoutes = require('./routes/states');
-app.use('/states', statesRoutes);  // Correctly use the router here
+app.use('/states', statesRoutes);
 
 // 404 Catch-all
 app.all('*', (req, res) => {
@@ -31,5 +32,5 @@ app.all('*', (req, res) => {
 });
 
 // Listen
-const PORT = process.env.PORT || 3500;
+const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

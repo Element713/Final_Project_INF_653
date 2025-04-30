@@ -1,4 +1,4 @@
-const State = require('../models/States');
+const State = require('../models/State');
 
 // Controller to fetch all states from MongoDB
 exports.getAllStates = async (req, res) => {
