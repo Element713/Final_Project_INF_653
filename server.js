@@ -26,7 +26,10 @@ app.get('^/$|/index(.html)?', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
   });
 
-
+//404 handler catchall
+app.all('*', (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+  });
 
 // Listen
 const PORT = process.env.PORT || 5500;
