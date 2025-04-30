@@ -6,6 +6,8 @@ const app = express();
 require('dotenv').config();
 const State = require('./models/State');
 console.log('State model loaded:', State);
+const cors = require('cors');
+app.use(cors());
 // Connect to MongoDB
 connectDB();
 
@@ -24,18 +26,6 @@ app.get('^/$|/index(.html)?', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
   });
 
-// 404 Catch-all
-// Catch-all 404 route for anything else
-app.all('*', (req, res) => {
-    res.status(404);
-    if (req.accepts('html')) {
-      res.sendFile(path.join(__dirname, 'views', '404.html'));
-    } else if (req.accepts('json')) {
-      res.json({ error: '404 Not Found' });
-    } else {
-      res.type('txt').send('404 Not Found');
-    }
-  });
 
 
 // Listen
