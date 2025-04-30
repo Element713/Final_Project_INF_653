@@ -110,3 +110,39 @@ exports.deleteFunFact = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+// Basic hardcoded state info fallback (since not all info is in MongoDB)
+const fs = require('fs');
+const path = require('path');
+
+const dataPath = path.join(__dirname, '..', 'models', 'statesData.json');
+const allStatesData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+
+// Utility to get a state's base data
+function getStateData(code) {
+    return allStatesData.find(s => s.code === code.toUpperCase());
+}
+
+exports.getCapital = (req, res) => {
+    const state = getStateData(req.params.state);
+    if (!state) return res.status(404).json({ error: 'State not found' });
+    res.json({ state: state.state, capital: state.capital });
+};
+
+exports.getNickname = (req, res) => {
+    const state = getStateData(req.params.state);
+    if (!state) return res.status(404).json({ error: 'State not found' });
+    res.json({ state: state.state, nickname: state.nickname });
+};
+
+exports.getPopulation = (req, res) => {
+    const state = getStateData(req.params.state);
+    if (!state) return res.status(404).json({ error: 'State not found' });
+    res.json({ state: state.state, population: state.population.toLocaleString() });
+};
+
+exports.getAdmission = (req, res) => {
+    const state = getStateData(req.params.state);
+    if (!state) return res.status(404).json({ error: 'State not found' });
+    res.json({ state: state.state, admitted: state.admission_date });
+};

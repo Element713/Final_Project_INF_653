@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const statesController = require('../controllers/statesController');
 
-const State = require('./models/State');
+const State = require('../models/State');
 
 const filePath = path.join(__dirname, '..', 'models', 'statesData.json');
 let statesData = [];
