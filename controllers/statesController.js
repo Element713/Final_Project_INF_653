@@ -3,12 +3,22 @@ const State = require('../models/State');
 // Controller to fetch all states from MongoDB
 exports.getAllStates = async (req, res) => {
     try {
-        const states = await State.find();  // Fetch all states
-        res.json(states);
+      const states = await State.find();
+      const contigQuery = req.query.contig;
+  
+      let filteredStates = states;
+  
+      if (contigQuery === 'true') {
+        filteredStates = states.filter(state => state.stateCode !== 'AK' && state.stateCode !== 'HI');
+      } else if (contigQuery === 'false') {
+        filteredStates = states.filter(state => state.stateCode === 'AK' || state.stateCode === 'HI');
+      }
+  
+      res.json(filteredStates);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+      res.status(500).json({ error: err.message });
     }
-};
+  };
 
 // Controller to fetch a single state by state code
 exports.getState = async (req, res) => {

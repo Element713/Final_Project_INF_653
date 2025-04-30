@@ -20,16 +20,23 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 const statesRoutes = require('./routes/states');
 app.use('/states', statesRoutes);
 
+// Route for root
+app.get('^/$|/index(.html)?', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+  });
+
 // 404 Catch-all
+// Catch-all 404 route for anything else
 app.all('*', (req, res) => {
+    res.status(404);
     if (req.accepts('html')) {
-        res.status(404).sendFile(path.join(__dirname, '/public/404.html'));
+      res.sendFile(path.join(__dirname, 'views', '404.html'));
     } else if (req.accepts('json')) {
-        res.status(404).json({ error: '404 Not Found' });
+      res.json({ error: '404 Not Found' });
     } else {
-        res.status(404).type('txt').send('404 Not Found');
+      res.type('txt').send('404 Not Found');
     }
-});
+  });
 
 // Listen
 const PORT = process.env.PORT || 5500;
