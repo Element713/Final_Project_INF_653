@@ -6,7 +6,6 @@ const app = express();
 require('dotenv').config();
 const State = require('./models/State');
 console.log('State model loaded:', State);
-
 // Connect to MongoDB
 connectDB();
 
@@ -38,6 +37,8 @@ app.all('*', (req, res) => {
     }
   });
 
+
 // Listen
 const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
