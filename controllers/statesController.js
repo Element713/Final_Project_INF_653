@@ -16,24 +16,19 @@ const findStateData = (code) => statesData.find(s => s.code.toUpperCase() === co
 =============================== */
 
 // GET all states (with optional contig filter)
-exports.getAllStates = async (req, res) => {
-  try {
-    const states = await State.find();
+exports.getAllStates = (req, res) => {
     const contigQuery = req.query.contig;
-
-    let filteredStates = states;
-
+  
+    let filteredStates = [...statesData];
+  
     if (contigQuery === 'true') {
-      filteredStates = states.filter(state => state.stateCode !== 'AK' && state.stateCode !== 'HI');
+      filteredStates = filteredStates.filter(state => state.code !== 'AK' && state.code !== 'HI');
     } else if (contigQuery === 'false') {
-      filteredStates = states.filter(state => state.stateCode === 'AK' || state.stateCode === 'HI');
+      filteredStates = filteredStates.filter(state => state.code === 'AK' || state.code === 'HI');
     }
-
+  
     res.json(filteredStates);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+  };
 
 // GET a single state
 exports.getState = async (req, res) => {
