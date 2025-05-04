@@ -45,10 +45,20 @@ exports.getAllStates = async (req, res) => {
 
 // GET a single state
 exports.getState = async (req, res) => {
+  const stateCode = req.params.state.toUpperCase();
+  const staticData = getStateData(stateCode);
+
+  if (!staticData) {
+    return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
+  }
+
   try {
-    const state = await State.findOne({ stateCode: req.params.state.toUpperCase() });
-    if (!state) return res.status(404).json({ error: 'State not found' });
-    res.json(state);
+    const mongoState = await State.findOne({ stateCode });
+    const result = {
+      ...staticData,
+      ...(mongoState?.funfacts?.length ? { funfacts: mongoState.funfacts } : {})
+    };
+    res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
