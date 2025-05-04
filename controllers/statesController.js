@@ -65,14 +65,26 @@ exports.getState = async (req, res) => {
 };
 
 // GET random fun fact
+// GET random fun fact
 exports.getRandomFunFact = async (req, res) => {
+  const stateCode = req.params.state.toUpperCase();
+
+  // ✅ Validate state code first
+  const staticData = getStateData(stateCode);
+  if (!staticData) {
+    return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
+  }
+
   try {
-    const state = await State.findOne({ stateCode: req.params.state.toUpperCase() });
+    const state = await State.findOne({ stateCode });
+
     if (!state || !state.funfacts?.length) {
-      return res.status(404).json({ message: `No Fun Facts found for ${getStateData(req.params.state)?.state || 'this state'}` });
+      return res.status(404).json({ message: `No Fun Facts found for ${staticData.state}` });
     }
+
     const randomFact = state.funfacts[Math.floor(Math.random() * state.funfacts.length)];
     res.json({ funfact: randomFact });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
