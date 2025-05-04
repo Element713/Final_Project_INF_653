@@ -7,9 +7,9 @@ const path = require('path');
 // ==========================
 // State Info Routes
 // ==========================
+  // GET all states, optionally filter by contig query (?contig=true/false)
+  router.get('/', statesController.getAllStates);
 
-// GET all states, optionally filter by contig query (?contig=true/false)
-router.get('/', statesController.getAllStates);
 
 // ==========================
 // Fun Fact Routes
@@ -35,13 +35,9 @@ router.get('/:state/admission', statesController.getAdmission);
 
 router.get('/:state', statesController.getState);
 
-
-// ==========================
-// Static HTML landing page
-// ==========================
-router.get('^/$|/index(.html)?', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views', 'index.html'));
-  });
   
+
+
+console.log("Router loaded")
 
 module.exports = router;

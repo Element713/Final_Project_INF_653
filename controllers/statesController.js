@@ -15,20 +15,33 @@ const findStateData = (code) => statesData.find(s => s.code.toUpperCase() === co
    GET HANDLERS
 =============================== */
 
-// GET all states (with optional contig filter)
-exports.getAllStates = (req, res) => {
-    const contigQuery = req.query.contig;
-  
-    let filteredStates = [...statesData];
-  
-    if (contigQuery === 'true') {
-      filteredStates = filteredStates.filter(state => state.code !== 'AK' && state.code !== 'HI');
-    } else if (contigQuery === 'false') {
-      filteredStates = filteredStates.filter(state => state.code === 'AK' || state.code === 'HI');
-    }
-  
-    res.json(filteredStates);
-  };
+exports.getAllStates = async (req, res) => {
+  const contigQuery = req.query.contig;
+  let filteredStates = [...statesData];
+
+  if (contigQuery === 'true') {
+    filteredStates = filteredStates.filter(state => state.code !== 'AK' && state.code !== 'HI');
+  } else if (contigQuery === 'false') {
+    filteredStates = filteredStates.filter(state => state.code === 'AK' || state.code === 'HI');
+  }
+
+  // Load all fun facts from Mongo
+  const mongoStates = await State.find();
+  const funFactsMap = {};
+  mongoStates.forEach(s => {
+    funFactsMap[s.stateCode] = s.funfacts;
+  });
+
+  // Merge funfacts into each state
+  const result = filteredStates.map(state => {
+    return {
+      ...state,
+      ...(funFactsMap[state.code] ? { funfacts: funFactsMap[state.code] } : {})
+    };
+  });
+
+  res.json(result);
+};
 
 // GET a single state
 exports.getState = async (req, res) => {
@@ -89,6 +102,10 @@ exports.getAdmission = (req, res) => {
 
 // POST funfacts
 exports.addFunFact = async (req, res) => {
+  console.log('🛬 POST /:state/funfact hit');
+  console.log('Body:', req.body);
+  console.log('Param state:', req.params.state);
+
   const { funfacts } = req.body;
   const stateCode = req.params.state.toUpperCase();
 
@@ -100,12 +117,12 @@ exports.addFunFact = async (req, res) => {
 
     if (state) {
       state.funfacts = [...(state.funfacts || []), ...funfacts];
-      await state.save();
     } else {
-      state = await State.create({ stateCode, funfacts });
+      state = new State({ stateCode, funfacts });
     }
 
-    res.status(201).json(state);
+    await state.save();
+    res.json(state);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
