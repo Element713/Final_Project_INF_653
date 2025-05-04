@@ -65,7 +65,6 @@ exports.getState = async (req, res) => {
 };
 
 // GET random fun fact
-// GET random fun fact
 exports.getRandomFunFact = async (req, res) => {
   const stateCode = req.params.state.toUpperCase();
 
@@ -92,10 +91,19 @@ exports.getRandomFunFact = async (req, res) => {
 
 // GET capital
 exports.getCapital = (req, res) => {
-  const state = getStateData(req.params.state);
-  if (!state) return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
-  res.json({ state: state.state, capital: state.capital });
+  const stateCode = req.params.state.toUpperCase();
+  const state = getStateData(stateCode);
+
+  if (!state) {
+    return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
+  }
+
+  res.json({
+    state: state.state,
+    capital: state.capital_city
+  });
 };
+
 
 // GET nickname
 exports.getNickname = (req, res) => {
@@ -106,18 +114,33 @@ exports.getNickname = (req, res) => {
 
 // GET population
 exports.getPopulation = (req, res) => {
-  const state = getStateData(req.params.state);
-  if (!state) return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
-  res.json({ state: state.state, population: state.population.toLocaleString() });
+  const stateCode = req.params.state.toUpperCase();
+  const state = getStateData(stateCode);
+
+  if (!state) {
+    return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
+  }
+
+  res.json({
+    state: state.state,
+    population: state.population.toLocaleString()
+  });
 };
 
 // GET admission
 exports.getAdmission = (req, res) => {
-  const state = getStateData(req.params.state);
-  if (!state) return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
-  res.json({ state: state.state, admitted: state.admission_date });
-};
+  const stateCode = req.params.state.toUpperCase();
+  const state = getStateData(stateCode);
 
+  if (!state) {
+    return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
+  }
+
+  res.json({
+    state: state.state,
+    admitted: state.admission_date
+  });
+};
 /* ===============================
    POST HANDLERS
 =============================== */
