@@ -90,22 +90,26 @@ exports.getAdmission = (req, res) => {
 // POST funfacts
 exports.addFunFact = async (req, res) => {
   const { funfacts } = req.body;
+  const stateCode = req.params.state.toUpperCase();
 
   if (!funfacts) return res.status(400).json({ message: 'State fun facts value required' });
   if (!Array.isArray(funfacts)) return res.status(400).json({ message: 'State fun facts value must be an array' });
 
   try {
-    const state = await State.findOne({ stateCode: req.params.state.toUpperCase() });
-    if (!state) return res.status(404).json({ message: 'State not found' });
+    let state = await State.findOne({ stateCode });
 
-    state.funfacts = [...(state.funfacts || []), ...funfacts];
-    await state.save();
-    res.json(state);
+    if (state) {
+      state.funfacts = [...(state.funfacts || []), ...funfacts];
+      await state.save();
+    } else {
+      state = await State.create({ stateCode, funfacts });
+    }
+
+    res.status(201).json(state);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
-
 /* ===============================
    PATCH HANDLERS
 =============================== */
