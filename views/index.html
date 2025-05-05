@@ -1,11 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>US States API</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>US States Info</title>
+  <style>
+    body {
+      background-color: #e6f2ff;
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      color: #003366;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background:#ffffff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      background-color: #007acc;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    button:hover {
+      background-color: #005c99;
+    }
+
+    .state {
+      border-bottom: 1px solid #ccc;
+      padding: 1rem 0;
+    }
+
+    .state:last-child {
+      border-bottom: none;
+    }
+
+    .state h2 {
+      margin: 0;
+      color: #003366;
+    }
+
+    .state p {
+      margin: 0.3rem 0;
+    }
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+  </style>
 </head>
 <body>
-    <h1>Welcome to the US States API!</h1>
-    <p>Visit <code>/states</code> to view all states.</p>
+    <div class="header">
+        <h1>U.S. States Info</h1>
+    <h1>Welcome to my final project: A US States API!</h1>
+        <p> 
+             Thank you Mr. Gray for you efforts as an educator, you have show cased a love of coding and a passion for teaching.
+        </p>
+  <h1>U.S. States Info</h1>
+  <div class="container">
+    <div class="button-wrapper">
+        <button onclick="loadStates()">View all States</button>
+      </div>
+    <div id="statesList"></div>
+  </div>
+
+  <script>
+    async function loadStates() {
+      try {
+        const res = await fetch('/states');
+        const data = await res.json();
+        const list = document.getElementById('statesList');
+        list.innerHTML = '';
+
+        data.forEach(state => {
+          const div = document.createElement('div');
+          div.className = 'state';
+          div.innerHTML = `
+            <h2>${state.state} (${state.code})</h2>
+            <p><strong>Capital:</strong> ${state.capital_city}</p>
+            <p><strong>Nickname:</strong> ${state.nickname}</p>
+            <p><strong>Population:</strong> ${state.population.toLocaleString()}</p>
+          `;
+          list.appendChild(div);
+        });
+      } catch (err) {
+        console.error('Error fetching states:', err);
+      }
+    }
+  </script>
 </body>
 </html>
