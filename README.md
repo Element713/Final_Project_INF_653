@@ -1,5 +1,3 @@
-In progress
-
-connected to mongodb/github through vs code
-using postman to test
-updating routes
+Final Project: INF 653 Back End Web Development
+ REST API built with Node.js, Express, and MongoDB
+ Contains routes to information and fun facts about U.S. states.

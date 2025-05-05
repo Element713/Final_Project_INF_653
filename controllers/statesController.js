@@ -7,13 +7,12 @@ const dataPath = path.join(__dirname, '..', 'models', 'statesData.json');
 const allStatesData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 const statesData = require('../models/statesData.json');
 
-// Utility to get static state data
+//  static state data
 const getStateData = (code) => allStatesData.find(s => s.code === code.toUpperCase());
 const findStateData = (code) => statesData.find(s => s.code.toUpperCase() === code.toUpperCase());
 
-/* ===============================
-   GET HANDLERS
-=============================== */
+
+   //GET HANDLERS
 
 exports.getAllStates = async (req, res) => {
   const contigQuery = req.query.contig;
@@ -25,7 +24,7 @@ exports.getAllStates = async (req, res) => {
     filteredStates = filteredStates.filter(state => state.code === 'AK' || state.code === 'HI');
   }
 
-  // Load all fun facts from Mongo
+  // Load from Mongo
   const mongoStates = await State.find();
   const funFactsMap = {};
   mongoStates.forEach(s => {
@@ -43,7 +42,7 @@ exports.getAllStates = async (req, res) => {
   res.json(result);
 };
 
-// GET a single state
+// GET - single state
 exports.getState = async (req, res) => {
   const stateCode = req.params.state.toUpperCase();
   const staticData = getStateData(stateCode);
@@ -64,11 +63,10 @@ exports.getState = async (req, res) => {
   }
 };
 
-// GET random fun fact
+// GET - random fun fact
 exports.getRandomFunFact = async (req, res) => {
   const stateCode = req.params.state.toUpperCase();
 
-  // ✅ Validate state code first
   const staticData = getStateData(stateCode);
   if (!staticData) {
     return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
@@ -141,9 +139,9 @@ exports.getAdmission = (req, res) => {
     admitted: state.admission_date
   });
 };
-/* ===============================
-   POST HANDLERS
-=============================== */
+
+//POST HANDLERS
+
 
 // POST funfacts
 exports.addFunFact = async (req, res) => {
@@ -172,9 +170,9 @@ exports.addFunFact = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-/* ===============================
-   PATCH HANDLERS
-=============================== */
+
+//PATCH HANDLERS
+
 
 // PATCH funfact
 exports.updateFunFact = async (req, res) => {
@@ -201,9 +199,9 @@ exports.updateFunFact = async (req, res) => {
   }
 };
 
-/* ===============================
-   DELETE HANDLERS
-=============================== */
+
+   //DELETE HANDLERS
+
 
 // DELETE funfact
 exports.deleteFunFact = async (req, res) => {
