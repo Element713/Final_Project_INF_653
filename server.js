@@ -25,7 +25,8 @@ app.get('^/$|/index(.html)?', (req, res) => {
   });
 
   // Static HTML landing page
-app.use('/', express.static(path.join(__dirname, '/public')));
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Listen
 const PORT = process.env.PORT || 3500;
